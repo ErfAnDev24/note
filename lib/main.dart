@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
 
 import 'package:hive_flutter/adapters.dart';
-
-import 'package:note/B.dart';
+import 'package:note/Car.dart';
+import 'package:note/Student.dart';
 
 void main() async {
-  // await Hive.initFlutter();
-  // await Hive.openBox('names');
-  var b = B();
-  b.printing();
-  //runApp(Application());
+  await Hive.initFlutter();
+  await Hive.openBox('names');
+  Hive.registerAdapter(CarAdapter());
+  await Hive.openBox<Car>('carBox');
+
+  Hive.registerAdapter(StudentAdapter());
+  await Hive.openBox<Student>('StudentBox');
+  runApp(Application());
 }
 
 class Application extends StatefulWidget {
@@ -22,7 +25,8 @@ class Application extends StatefulWidget {
 class _ApplicationState extends State<Application> {
   var textEditingController = TextEditingController();
   var intputedText = '';
-  var box = Hive.box('names');
+  var box = Hive.box<Car>('carBox');
+  var studentBox = Hive.box<Student>('StudentBox');
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +55,7 @@ class _ApplicationState extends State<Application> {
             ElevatedButton(
               onPressed: () {
                 setState(() {
-                  box.delete(1);
+                  studentBox.delete(1);
                 });
               },
               child: Text(
@@ -60,9 +64,17 @@ class _ApplicationState extends State<Application> {
             ),
             ElevatedButton(
               onPressed: () {
-                setState(() {
-                  box.put(1, textEditingController.text);
-                });
+                studentBox.put(
+                  1,
+                  Student('ErfAn', 'Man', '195cm'),
+                );
+
+                studentBox.put(
+                  2,
+                  Student('Fatemeh', 'Woman', '177cm'),
+                );
+
+                setState(() {});
               },
               child: Text(
                 'Click for printing',
@@ -71,9 +83,21 @@ class _ApplicationState extends State<Application> {
             SizedBox(
               height: 30,
             ),
-            Text(
-              box.get(1) ?? 'empty',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+            ElevatedButton(
+              onPressed: () {
+                if (studentBox.get(1) == null) {
+                  return;
+                }
+
+                print(studentBox.get(1)!.name);
+                print(studentBox.get(1)!.gender);
+                print(studentBox.get(1)!.height);
+                print('');
+                print(studentBox.get(2)!.name);
+                print(studentBox.get(2)!.gender);
+                print(studentBox.get(2)!.height);
+              },
+              child: Text('read'),
             ),
           ]),
         ),
