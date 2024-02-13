@@ -2,10 +2,14 @@ import 'package:flutter/material.dart';
 
 import 'package:hive_flutter/adapters.dart';
 
+import 'package:note/B.dart';
+
 void main() async {
-  await Hive.initFlutter();
-  await Hive.openBox('names');
-  runApp(Application());
+  // await Hive.initFlutter();
+  // await Hive.openBox('names');
+  var b = B();
+  b.printing();
+  //runApp(Application());
 }
 
 class Application extends StatefulWidget {
