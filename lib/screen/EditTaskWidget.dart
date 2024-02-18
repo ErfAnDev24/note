@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:time_pickerr/time_pickerr.dart';
 
-class AddTaskWidget extends StatefulWidget {
-  const AddTaskWidget({super.key});
+class EditTaskWidget extends StatefulWidget {
+  const EditTaskWidget({super.key});
 
   @override
-  State<AddTaskWidget> createState() => _AddTaskWidgetState();
+  State<EditTaskWidget> createState() => _EditTaskWidgetState();
 }
 
-class _AddTaskWidgetState extends State<AddTaskWidget> {
+class _EditTaskWidgetState extends State<EditTaskWidget> {
   var focusNodeOne = FocusNode();
   var focusNodeTwo = FocusNode();
   var selectedTaskType = 0;
@@ -162,7 +162,7 @@ class _AddTaskWidgetState extends State<AddTaskWidget> {
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
-                  child: Text('Add Task'),
+                  child: Text('Edit Task'),
                   style: ElevatedButton.styleFrom(
                       padding: EdgeInsets.symmetric(horizontal: 80),
                       shape: RoundedRectangleBorder(

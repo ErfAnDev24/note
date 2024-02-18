@@ -19,7 +19,7 @@ class _HomeScreenState extends State<HomeScreen> {
         child: ListView.builder(
           itemCount: 9,
           itemBuilder: (context, index) {
-            return TaskWidget();
+            return getTaskWidget();
           },
         ),
       ),
@@ -40,23 +40,12 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
+
+  Widget getTaskWidget() {
+    return Dismissible(
+      key: UniqueKey(),
+      onDismissed: (direction) {},
+      child: TaskWidget(),
+    );
+  }
 }
-
-
-/*Padding(
-        padding: EdgeInsets.all(10),
-        child: Container(
-          width: 70,
-          height: 70,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: Color.fromARGB(255, 20, 176, 142),
-          ),
-          child: Transform.scale(
-            scale: 1.4,
-            child: Image(
-              image: AssetImage('images/icon_add.png'),
-            ),
-          ),
-        ),
-      ),*/

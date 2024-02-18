@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:note/screen/EditTaskWidget.dart';
 
 class TaskWidget extends StatefulWidget {
   const TaskWidget({super.key});
@@ -8,6 +9,8 @@ class TaskWidget extends StatefulWidget {
 }
 
 class _TaskWidgetState extends State<TaskWidget> {
+  bool isTaskDone = false;
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -71,8 +74,12 @@ class _TaskWidgetState extends State<TaskWidget> {
                               scale: 1.4,
                               child: Checkbox(
                                 activeColor: Color.fromARGB(255, 20, 225, 181),
-                                value: true,
-                                onChanged: (value) {},
+                                value: isTaskDone,
+                                onChanged: (value) {
+                                  setState(() {
+                                    isTaskDone = !isTaskDone;
+                                  });
+                                },
                               ),
                             ),
                           ),
@@ -113,32 +120,44 @@ class _TaskWidgetState extends State<TaskWidget> {
                           SizedBox(
                             width: 12,
                           ),
-                          Container(
-                            height: 30,
-                            width: 70,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(5),
-                              color: Color.fromARGB(255, 210, 225, 222),
-                            ),
-                            child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    'Edit',
-                                    style: TextStyle(
-                                        color:
-                                            Color.fromARGB(255, 20, 225, 181),
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                  Container(
-                                    margin: EdgeInsets.only(left: 6),
-                                    width: 20,
-                                    height: 20,
-                                    child: Image(
-                                      image: AssetImage('images/icon_edit.png'),
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) {
+                                    return EditTaskWidget();
+                                  },
+                                ),
+                              );
+                            },
+                            child: Container(
+                              height: 30,
+                              width: 70,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(5),
+                                color: Color.fromARGB(255, 210, 225, 222),
+                              ),
+                              child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      'Edit',
+                                      style: TextStyle(
+                                          color:
+                                              Color.fromARGB(255, 20, 225, 181),
+                                          fontWeight: FontWeight.bold),
                                     ),
-                                  ),
-                                ]),
+                                    Container(
+                                      margin: EdgeInsets.only(left: 6),
+                                      width: 20,
+                                      height: 20,
+                                      child: Image(
+                                        image:
+                                            AssetImage('images/icon_edit.png'),
+                                      ),
+                                    ),
+                                  ]),
+                            ),
                           ),
                         ],
                       ),
