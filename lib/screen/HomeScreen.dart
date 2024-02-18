@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:note/TaskWidget.dart';
+import 'package:note/model/Task.dart';
+
 import 'package:note/screen/AddTaskWidget.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -10,6 +13,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  var tastBox = Hive.box<Task>('taskBox');
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -17,9 +22,9 @@ class _HomeScreenState extends State<HomeScreen> {
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 15),
         child: ListView.builder(
-          itemCount: 9,
+          itemCount: tastBox.values.length,
           itemBuilder: (context, index) {
-            return getTaskWidget();
+            return getTaskWidget(index);
           },
         ),
       ),
@@ -41,11 +46,11 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget getTaskWidget() {
+  Widget getTaskWidget(int index) {
     return Dismissible(
       key: UniqueKey(),
       onDismissed: (direction) {},
-      child: TaskWidget(),
+      child: TaskWidget(passedTask: tastBox.values.toList()[index]),
     );
   }
 }

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
+import 'package:note/model/Task.dart';
 import 'package:time_pickerr/time_pickerr.dart';
 
 class AddTaskWidget extends StatefulWidget {
@@ -12,6 +14,10 @@ class _AddTaskWidgetState extends State<AddTaskWidget> {
   var focusNodeOne = FocusNode();
   var focusNodeTwo = FocusNode();
   var selectedTaskType = 0;
+  var titleController = TextEditingController();
+  var descriptionController = TextEditingController();
+  var newTime = DateTime.now();
+  var taskBox = Hive.box<Task>('taskBox');
 
   @override
   void initState() {
@@ -38,6 +44,7 @@ class _AddTaskWidgetState extends State<AddTaskWidget> {
                 ),
                 TextFormField(
                   focusNode: focusNodeOne,
+                  controller: titleController,
                   cursorColor: Color.fromARGB(255, 20, 225, 181),
                   decoration: InputDecoration(
                     contentPadding: EdgeInsets.symmetric(horizontal: 15),
@@ -63,6 +70,7 @@ class _AddTaskWidgetState extends State<AddTaskWidget> {
                 ),
                 TextFormField(
                   focusNode: focusNodeTwo,
+                  controller: descriptionController,
                   cursorColor: Color.fromARGB(255, 20, 225, 181),
                   decoration: InputDecoration(
                     contentPadding: EdgeInsets.symmetric(horizontal: 15),
@@ -98,7 +106,11 @@ class _AddTaskWidgetState extends State<AddTaskWidget> {
                   ),
                   elevation: 0.8,
                   positiveButtonText: 'Insert',
-                  onPositivePressed: (context, time) {},
+                  onPositivePressed: (context, time) {
+                    setState(() {
+                      newTime = time;
+                    });
+                  },
                   onNegativePressed: (context) {},
                 ),
                 SizedBox(
@@ -160,6 +172,8 @@ class _AddTaskWidgetState extends State<AddTaskWidget> {
                 ),
                 ElevatedButton(
                   onPressed: () {
+                    addTask(titleController.text, descriptionController.text,
+                        newTime);
                     Navigator.of(context).pop();
                   },
                   child: Text('Add Task'),
@@ -177,5 +191,13 @@ class _AddTaskWidgetState extends State<AddTaskWidget> {
         ),
       ),
     );
+  }
+
+  void addTask(String newTitle, String newDescription, DateTime newTime) {
+    var task = Task();
+    task.title = newTitle;
+    task.description = newDescription;
+    task.time = newTime;
+    taskBox.add(task);
   }
 }

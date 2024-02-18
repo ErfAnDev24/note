@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:note/model/Task.dart';
+
 import 'package:note/screen/EditTaskWidget.dart';
 
 class TaskWidget extends StatefulWidget {
-  const TaskWidget({super.key});
+  TaskWidget({super.key, required this.passedTask});
+
+  Task? passedTask;
 
   @override
   State<TaskWidget> createState() => _TaskWidgetState();
@@ -76,9 +80,11 @@ class _TaskWidgetState extends State<TaskWidget> {
                                 activeColor: Color.fromARGB(255, 20, 225, 181),
                                 value: isTaskDone,
                                 onChanged: (value) {
-                                  setState(() {
-                                    isTaskDone = !isTaskDone;
-                                  });
+                                  setState(
+                                    () {
+                                      isTaskDone = !isTaskDone;
+                                    },
+                                  );
                                 },
                               ),
                             ),
