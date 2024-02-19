@@ -19,6 +19,7 @@ class _TaskWidgetState extends State<TaskWidget> {
   @override
   void initState() {
     task = widget.passedTask;
+    isTaskDone = task!.isDone == null ? false : task!.isDone!;
     super.initState();
   }
 
@@ -90,6 +91,9 @@ class _TaskWidgetState extends State<TaskWidget> {
                                   setState(
                                     () {
                                       isTaskDone = !isTaskDone;
+                                      task!.isDone = isTaskDone;
+                                      print(task!.isDone);
+                                      task!.save();
                                     },
                                   );
                                 },
@@ -138,7 +142,9 @@ class _TaskWidgetState extends State<TaskWidget> {
                               Navigator.of(context).push(
                                 MaterialPageRoute(
                                   builder: (context) {
-                                    return EditTaskWidget();
+                                    return EditTaskWidget(
+                                      selectedTask: task!,
+                                    );
                                   },
                                 ),
                               );
@@ -187,7 +193,7 @@ class _TaskWidgetState extends State<TaskWidget> {
               height: 120,
               decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: AssetImage('images/banking.png'),
+                  image: AssetImage('${task?.type?.imageAddress}'),
                   fit: BoxFit.cover,
                 ),
               ),

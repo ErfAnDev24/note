@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:note/TaskWidget.dart';
@@ -15,6 +16,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   var tastBox = Hive.box<Task>('taskBox');
+  bool isVisble = true;
 
   @override
   Widget build(BuildContext context) {
@@ -25,28 +27,47 @@ class _HomeScreenState extends State<HomeScreen> {
         child: ValueListenableBuilder(
           valueListenable: tastBox.listenable(),
           builder: (context, value, child) {
-            return ListView.builder(
-              itemCount: tastBox.values.length,
-              itemBuilder: (context, index) {
-                return getTaskWidget(index);
+            return NotificationListener<UserScrollNotification>(
+              onNotification: (notification) {
+                if (notification.direction == ScrollDirection.forward) {
+                  setState(() {
+                    isVisble = true;
+                  });
+                }
+
+                if (notification.direction == ScrollDirection.reverse) {
+                  setState(() {
+                    isVisble = false;
+                  });
+                }
+                return true;
               },
+              child: ListView.builder(
+                itemCount: tastBox.values.length,
+                itemBuilder: (context, index) {
+                  return getTaskWidget(index);
+                },
+              ),
             );
           },
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) {
-                return AddTaskWidget();
-              },
-            ),
-          );
-        },
-        backgroundColor: Color.fromARGB(255, 21, 244, 184),
-        child: Image(
-          image: AssetImage('images/icon_add.png'),
+      floatingActionButton: Visibility(
+        visible: isVisble,
+        child: FloatingActionButton(
+          onPressed: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) {
+                  return AddTaskWidget();
+                },
+              ),
+            );
+          },
+          backgroundColor: Color.fromARGB(255, 21, 244, 184),
+          child: Image(
+            image: AssetImage('images/icon_add.png'),
+          ),
         ),
       ),
     );

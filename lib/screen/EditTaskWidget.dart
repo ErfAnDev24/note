@@ -1,8 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:note/Utils.dart';
+import 'package:note/model/Task.dart';
+import 'package:note/model/TaskType.dart';
+import 'package:note/model/TypeEnum.dart';
 import 'package:time_pickerr/time_pickerr.dart';
 
 class EditTaskWidget extends StatefulWidget {
-  const EditTaskWidget({super.key});
+  EditTaskWidget({super.key, required this.selectedTask});
+
+  Task selectedTask;
 
   @override
   State<EditTaskWidget> createState() => _EditTaskWidgetState();
@@ -11,10 +18,24 @@ class EditTaskWidget extends StatefulWidget {
 class _EditTaskWidgetState extends State<EditTaskWidget> {
   var focusNodeOne = FocusNode();
   var focusNodeTwo = FocusNode();
-  var selectedTaskType = 0;
+  var selectedTaskType;
+  TaskType? taskType;
+  var titleController;
+  var descriptionController;
+  var newTime;
+  Task? task;
+  var taskBox = Hive.box<Task>('taskBox');
+  List<TaskType> typeList = getTaskTypes();
 
   @override
   void initState() {
+    task = widget.selectedTask;
+    titleController = TextEditingController(text: task?.title);
+    descriptionController = TextEditingController(text: task?.description);
+    newTime = task?.time;
+    selectedTaskType = getTaskTypes()
+        .indexWhere((element) => element.name == task!.type!.name);
+
     focusNodeOne.addListener(() {
       setState(() {});
     });
@@ -38,6 +59,7 @@ class _EditTaskWidgetState extends State<EditTaskWidget> {
                 ),
                 TextFormField(
                   focusNode: focusNodeOne,
+                  controller: titleController,
                   cursorColor: Color.fromARGB(255, 20, 225, 181),
                   decoration: InputDecoration(
                     contentPadding: EdgeInsets.symmetric(horizontal: 15),
@@ -63,6 +85,7 @@ class _EditTaskWidgetState extends State<EditTaskWidget> {
                 ),
                 TextFormField(
                   focusNode: focusNodeTwo,
+                  controller: descriptionController,
                   cursorColor: Color.fromARGB(255, 20, 225, 181),
                   decoration: InputDecoration(
                     contentPadding: EdgeInsets.symmetric(horizontal: 15),
@@ -98,14 +121,18 @@ class _EditTaskWidgetState extends State<EditTaskWidget> {
                   ),
                   elevation: 0.8,
                   positiveButtonText: 'Insert',
-                  onPositivePressed: (context, time) {},
+                  onPositivePressed: (context, time) {
+                    setState(() {
+                      newTime = time;
+                    });
+                  },
                   onNegativePressed: (context) {},
                 ),
                 SizedBox(
                   height: 120,
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
-                    itemCount: 6,
+                    itemCount: typeList.length,
                     itemBuilder: (context, index) {
                       return GestureDetector(
                         onTap: () {
@@ -114,7 +141,7 @@ class _EditTaskWidgetState extends State<EditTaskWidget> {
                           });
                         },
                         child: Container(
-                          width: 100,
+                          width: 140,
                           height: 100,
                           margin: EdgeInsets.symmetric(horizontal: 10),
                           decoration: BoxDecoration(
@@ -133,12 +160,13 @@ class _EditTaskWidgetState extends State<EditTaskWidget> {
                               children: [
                                 Expanded(
                                   child: Image(
-                                    image: AssetImage('images/banking.png'),
+                                    image: AssetImage(
+                                        '${typeList[index].imageAddress}'),
                                   ),
                                   flex: 8,
                                 ),
                                 Expanded(
-                                  child: Text('Banking',
+                                  child: Text('${typeList[index].name}',
                                       style: index == selectedTaskType
                                           ? TextStyle(
                                               color: Colors.white,
@@ -160,6 +188,8 @@ class _EditTaskWidgetState extends State<EditTaskWidget> {
                 ),
                 ElevatedButton(
                   onPressed: () {
+                    editTask(titleController.text, descriptionController.text,
+                        newTime, getTaskTypes()[selectedTaskType]);
                     Navigator.of(context).pop();
                   },
                   child: Text('Edit Task'),
@@ -177,5 +207,14 @@ class _EditTaskWidgetState extends State<EditTaskWidget> {
         ),
       ),
     );
+  }
+
+  editTask(String passedTitle, String passedDescription, DateTime passedTime,
+      TaskType passedTaskType) {
+    task!.time = passedTime;
+    task!.title = passedTitle;
+    task!.description = passedDescription;
+    task!.type = passedTaskType;
+    task!.save();
   }
 }

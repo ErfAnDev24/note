@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
+import 'package:note/Utils.dart';
 import 'package:note/model/Task.dart';
+import 'package:note/model/TaskType.dart';
 import 'package:time_pickerr/time_pickerr.dart';
 
 class AddTaskWidget extends StatefulWidget {
@@ -18,6 +20,7 @@ class _AddTaskWidgetState extends State<AddTaskWidget> {
   var descriptionController = TextEditingController();
   var newTime = DateTime.now();
   var taskBox = Hive.box<Task>('taskBox');
+  List<TaskType> typeList = getTaskTypes();
 
   @override
   void initState() {
@@ -117,7 +120,7 @@ class _AddTaskWidgetState extends State<AddTaskWidget> {
                   height: 120,
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
-                    itemCount: 6,
+                    itemCount: typeList.length,
                     itemBuilder: (context, index) {
                       return GestureDetector(
                         onTap: () {
@@ -126,7 +129,7 @@ class _AddTaskWidgetState extends State<AddTaskWidget> {
                           });
                         },
                         child: Container(
-                          width: 100,
+                          width: 140,
                           height: 100,
                           margin: EdgeInsets.symmetric(horizontal: 10),
                           decoration: BoxDecoration(
@@ -145,12 +148,13 @@ class _AddTaskWidgetState extends State<AddTaskWidget> {
                               children: [
                                 Expanded(
                                   child: Image(
-                                    image: AssetImage('images/banking.png'),
+                                    image: AssetImage(
+                                        '${typeList[index].imageAddress}'),
                                   ),
                                   flex: 8,
                                 ),
                                 Expanded(
-                                  child: Text('Banking',
+                                  child: Text('${typeList[index].name}',
                                       style: index == selectedTaskType
                                           ? TextStyle(
                                               color: Colors.white,
@@ -198,6 +202,7 @@ class _AddTaskWidgetState extends State<AddTaskWidget> {
     task.title = newTitle;
     task.description = newDescription;
     task.time = newTime;
+    task.type = getTaskTypes()[selectedTaskType];
     taskBox.add(task);
   }
 }
