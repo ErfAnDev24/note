@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:note/TaskWidget.dart';
 import 'package:note/model/Task.dart';
 
@@ -21,10 +22,15 @@ class _HomeScreenState extends State<HomeScreen> {
       backgroundColor: Color.fromARGB(255, 201, 201, 201),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 15),
-        child: ListView.builder(
-          itemCount: tastBox.values.length,
-          itemBuilder: (context, index) {
-            return getTaskWidget(index);
+        child: ValueListenableBuilder(
+          valueListenable: tastBox.listenable(),
+          builder: (context, value, child) {
+            return ListView.builder(
+              itemCount: tastBox.values.length,
+              itemBuilder: (context, index) {
+                return getTaskWidget(index);
+              },
+            );
           },
         ),
       ),
@@ -49,7 +55,9 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget getTaskWidget(int index) {
     return Dismissible(
       key: UniqueKey(),
-      onDismissed: (direction) {},
+      onDismissed: (direction) {
+        tastBox.deleteAt(index);
+      },
       child: TaskWidget(passedTask: tastBox.values.toList()[index]),
     );
   }

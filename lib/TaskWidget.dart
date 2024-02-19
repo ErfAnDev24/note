@@ -14,6 +14,13 @@ class TaskWidget extends StatefulWidget {
 
 class _TaskWidgetState extends State<TaskWidget> {
   bool isTaskDone = false;
+  Task? task;
+
+  @override
+  void initState() {
+    task = widget.passedTask;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +57,7 @@ class _TaskWidgetState extends State<TaskWidget> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'First',
+                                  '${task?.title}',
                                   style: TextStyle(
                                     fontSize: 13,
                                     fontWeight: FontWeight.bold,
@@ -63,7 +70,7 @@ class _TaskWidgetState extends State<TaskWidget> {
                                 SizedBox(
                                   width: 160,
                                   child: Text(
-                                    'Secondaerfmaerfmeropmerpom,vaeropergoeprkgoop,wmvwm',
+                                    '${task?.description}',
                                     maxLines: 2,
                                     style: TextStyle(fontSize: 13),
                                     overflow: TextOverflow.ellipsis,
@@ -108,7 +115,7 @@ class _TaskWidgetState extends State<TaskWidget> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Text(
-                                    '10:30',
+                                    '${getTimeUnderZero(task!)}',
                                     style: TextStyle(
                                         color: Colors.white,
                                         fontWeight: FontWeight.bold),
@@ -190,5 +197,24 @@ class _TaskWidgetState extends State<TaskWidget> {
         ],
       ),
     );
+  }
+
+  String getTimeUnderZero(Task task) {
+    DateTime? time = task.time;
+    int hour = time!.hour;
+    int minutes = time.minute;
+
+    String finalHour = hour.toString();
+    String finalMinutes = minutes.toString();
+
+    if (hour < 10) {
+      finalHour = '0' + finalHour;
+    }
+
+    if (minutes < 10) {
+      finalMinutes = '0' + finalMinutes;
+    }
+
+    return '${finalHour}:${finalMinutes}';
   }
 }
